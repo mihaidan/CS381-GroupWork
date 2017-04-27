@@ -147,6 +147,6 @@ more calculations, Op must be called several times.
 -- expressions in the second abstract syntax.
 translate :: Expr -> Exp
 translate (N x) = (Num x)
-translate (Plus (N x) (N y)) = (Apply Add [(Num x), (Num y)])
-translate (Times (N x) (N y)) = (Apply Multiply [(Num x), (Num y)])
-translate (Neg (N x)) = (Apply Negate [(Num x)]) 
+translate (Plus (N x) (N y)) = (Apply Add [(translate (N x)), (translate (N y))])
+translate (Times (N x) (N y)) = (Apply Multiply [(translate (N x)), (translate (N y))])
+translate (Neg (N x)) = (Apply Negate [(translate (N x))])
