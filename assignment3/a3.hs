@@ -64,6 +64,7 @@ rank (com:list) r = if(r - n < 0)
                        else rank list (m - n + r)
                        where (n,m) = rankC com
 
+--Tests
 test1 = rankP [LD 1, LD 1, LD 1] --Just 3
 test2 = rankP [LD 1, LD 2, ADD]  --Just 1
 test3 = rankP [LD 1, POP 2]      --Nothing
@@ -97,6 +98,7 @@ semStatTC :: Prog -> Maybe Stack
 semStatTC prgm | rankP prgm /= Nothing = Just (sem prgm [])
                | otherwise             = Nothing
 
+--Tests
 t1 = semStatTC [LD 1, LD 1, LD 1] -- Just [1,1,1]
 t2 = semStatTC [LD 1, LD 2, ADD]  -- Just [3]
 t3 = semStatTC [LD 1, POP 2]      --Nothing
@@ -109,19 +111,70 @@ t4 = semStatTC [LD 1, SWAP]       --Nothing
 data Shape = X
            | TD Shape Shape
            | LR Shape Shape
-           deriving Show
+           deriving (Eq, Show)
 
 --Semantic Domain
 type BBox = (Int, Int)
 
 {-- (a) --}
 -- Define a type checker for the shape language as a Haskell function.
---bbox :: Shape -> BBox
+bbox :: Shape -> BBox
+{-- In case of X, set it equal to 1,1. --}
+bbox X              = (1,1)
+{-- In case of TopDown, get the maximum x variable between
+    the two shapes, and add the y variables. x1/y1 correspond
+    to the coordinates of the first shape, while x2/y2
+    correspond to the coordinates of the second shape. --}
+bbox (TD shp1 shp2) = (max x1 x2, y1+y2)
+                        where (x1,y1) = bbox shp1
+                              (x2,y2) = bbox shp2
+{-- In case of LeftRight, get the maximum y variable between
+    the two shapes, and add the x variables. x1/y1 correspond
+    to the coordinates of the first shape, while x2/y2
+    correspond to the coordinates of the second shape. --}
+bbox (LR shp1 shp2) = (x1+x2, max y1 y2)
+                        where (x1,y1) = bbox shp1
+                              (x2,y2) = bbox shp2
+
+--Tests
+tbox1 = bbox (LR (TD X X) X)          --(2,2)
+tbox2 = bbox (TD X (LR X X))          --(2,2)
+tbox3 = bbox (TD (TD (LR X X) X) X)   --(2,3)
 
 {-- (b) --}
 -- Define a type checker for the shape language that assigns types
 -- only to rectangular shapes by defining a Haskell function.
---rect :: Shape -> Maybe BBox
+{-- DIFFERENCE BETWEEN bbox AND rect:
+    The only difference between part (a) and part (b)
+    is the check prior to calculation. For TD, it makes
+    sure that the x variables of the two shapes are the
+    same, otherwise it will return Nothing. For LR, it
+    makes sure that the y variables of the two shapes
+    are the same, otherwise, it returns Nothing. These
+    checks make sure that the returned BBox is a rectangle.--}
+rect :: Shape -> Maybe BBox
+{-- In case of X, set it equal to 1,1. --}
+rect X              = Just (1,1)
+{-- In case of TopDown, get the maximum x variable between
+    the two shapes, and add the y variables. x1/y1 correspond
+    to the coordinates of the first shape, while x2/y2
+    correspond to the coordinates of the second shape. --}
+rect (TD shp1 shp2) | x1==x2    = Just (x1, y1+y2)
+                    | otherwise = Nothing
+                      where Just (x1,y1) = rect shp1
+                            Just (x2,y2) = rect shp2
+{-- In case of LeftRight, get the maximum y variable between
+    the two shapes, and add the x variables. x1/y1 correspond
+    to the coordinates of the first shape, while x2/y2
+    correspond to the coordinates of the second shape. --}
+rect (LR shp1 shp2) | y1==y2    = Just (x1+x2, y1)
+                    | otherwise = Nothing
+                      where Just (x1,y1) = rect shp1
+                            Just (x2,y2) = rect shp2
+--Tests
+trect1 = rect (TD (TD X X) X)        --Just (1,3)
+trect2 = rect (LR X (TD X (TD X X))) --Nothing
+trect3 = rect (TD X (LR X X))        --Nothing
 
 
 
