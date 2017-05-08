@@ -47,7 +47,7 @@ rankC (POP x) = (x,0)
     from rankCmd is 0). If it is, then continue to
     the rank function, otherwise, return Nothing. --}
 rankP :: Prog -> Maybe Rank
-rankP []          = Just 0
+rankP []         = Just 0
 rankP (com:list) = if(n /= 0)
                       then Nothing
                       else rank list (m - n)
@@ -58,7 +58,7 @@ rankP (com:list) = if(n /= 0)
     Then, it recursively cycles through the rest of the
     list, updating r (rank) appropriately. --}
 rank :: Prog -> Rank -> Maybe Rank
-rank [] r          = Just r
+rank [] r         = Just r
 rank (com:list) r = if(r - n < 0)
                        then Nothing
                        else rank list (m - n + r)
@@ -94,6 +94,7 @@ semCmd SWAP stk      = init(init stk) ++ [last stk] ++ [last(init stk)]
 -- Takes the (length - x) from the stack.
 semCmd (POP num) stk = take ((length stk)-num) stk
 
+{-- Same idea as the TypeChecker on the in-class exercise. --}
 semStatTC :: Prog -> Maybe Stack
 semStatTC prgm | rankP prgm /= Nothing = Just (sem prgm [])
                | otherwise             = Nothing
@@ -185,6 +186,9 @@ g x y = if not (null x) then [] else [y]
 {-- (a) --}
 {--
 (1) What are the types of f and g?
+Type of f: [t] -> t -> [t]
+Type of g: [a] -> t -> [t]
+
 (2) Explain why the functions have these types.
 (3) Which type is more general?
 (4) Why do f and g have different types?
