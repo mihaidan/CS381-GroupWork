@@ -190,17 +190,34 @@ Type of f: [t] -> t -> [t]
 Type of g: [a] -> t -> [t]
 
 (2) Explain why the functions have these types.
+The return type for both functions f and g are lists. Function
+checks if the list x is null (which returns a Boolean), then
+returns either [y] or x (which has to be a list in order for
+this function to work). Type g requires x to be of type list,
+but does not set any restrictions on y.
+
 (3) Which type is more general?
+With these given definitions, type g is more general. This
+is due to the fact that x is not one of the return types,
+therefore, does not have to be the same type as y. As
+mentioned above, there are no type restrictions set on y.
+
 (4) Why do f and g have different types?
+Function g allows y to be some different type other than x, 
+while that is not the case for f. This is because x is not one
+of the return variables. Both x and y must be lists, which is 
+why there is only one type shown.
 --}
 
 {-- (b) --}
 --Find a (simple) definition for a function h that has the following type.
---h :: [b] -> [(a,b)] -> [b]
+h :: [b] -> [(a,b)] -> [b]
+h xs [(w,y)] = y:xs
 
 {-- (c) --}
 --Find a (simple) definition for a function k that has the following type.
---k :: (a->b) -> ((a->b)->a)->b
+k :: (a->b) -> ((a->b)->a) -> b
+k func1 func2 = func1 (func2 func1)
 
 {-- (d) --}
 -- Can you define a function of type a -> b? If yes, explain your definition. 
