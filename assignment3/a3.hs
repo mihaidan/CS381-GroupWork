@@ -223,3 +223,8 @@ k func1 func2 = func1 (func2 func1)
 -- Can you define a function of type a -> b? If yes, explain your definition. 
 -- If not, explain why it is so difficult.
 --l :: a -> b
+--The appove statement says that the input of l which is a is not the same as b. 
+--It is a polymorphic function, and cannot be definned because if it is a statically typed language. 
+--In haskell it is not possible to type infer the function beause a and b have no external relation to each other.
+--
+--
