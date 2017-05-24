@@ -18,16 +18,34 @@
 --pictures each showing the complete run time stack with all activation records after each statement or function
 --call.
 
--- Note. Do not use the alternative model of “temporary stack evaluation” that was briefly illustrated on
---slides 20 and 25 to explain the implementation given in FunStatScope.hs and FunRec.hs. Rather use one
---stack onto which a new activation record is pushed on each recursive function call.
-
-
-
-
-
-
-
+--1 Answer:
+--   []
+--1  [x:?]
+--2  [y:?, x:?]
+--3  [y:1, x:?]
+--4  [f:{}, y:1, x:?]
+--11 
+--          [x:2, f:{}, y:1, x:?]
+--        5 [x:2, f:{}, y:1, x:?]
+--        7 [x:2, f:{}, y:1, x:?]
+--        8 
+--               [x:1, x:2, f:{}, y:1, x:?]
+--             5 [x:1, x:2, f:{}, y:1, x:?]
+--             7 [x:1, x:2, f:{}, y:1, x:?]
+--             8
+--                    [x:0, x:1, x:2, f:{}, y:1, x:?]
+--                  5 [x:0, x:1, x:2, f:{}, y:1, x:?]
+--                  6 [x:0, x:1, x:2, f:{}, y:1, x:?]
+--                  7 [x:0, x:1, x:2, f:{}, y:1, x:?]
+--                  9 [res:1, x:0, x:1, x:2, f:{}, y:1, x:?]
+--             8 [x:1, x:2, f:{}, y:2, x:?]
+--             9 [res:2, x:1, x:2, f:{}, y:2, x:?]
+--        8 [x:2, f:{}, y:5, x:?]
+--        9 [res:5, x:2, f:{}, y:5, x:?]
+--10 [f:{}, y:1, x:?]
+--11 [f:{}, y:5, x:5]
+--12 [y:5, x:5]
+--13 []
 
 --Excercise #2
 --Consider the following block. Assume call-by-value parameter passing.
@@ -52,10 +70,9 @@
 --b.Which value will be assigned to z in line 12 under dynamic scoping?
 --
 
---Note: It might be instructive to draw the runtime stack for different
---times of the execution, but it is not strictly required.
-            
-            
+
+
+
 --Excercise #3 Parameter Passing
 --Consider the following block. Assume dynamic scoping.
 --{ int y; 
@@ -75,11 +92,53 @@
 --}
 --What are the values of y and z at the end of the above block under the assumption that both parameters a and x
 --are passed:
---a. Call-by-Name
---b. Call-by-Need
---Note: It might be instructive to draw the runtime stack for different times of the execution, but it is not
---strictly required.
 
+--a. Call-by-Name
+--   The above block would return 13 [g:{}, f:{}, z:72, y:36] when using call by name
+--   y = 36
+--   Z = 72
+
+--b. Call-by-Need
+--   The above block would return 13 [g:{}, f:{}, z:-28, y:-14] when using call by need
+--   y = -14
+--   z= -28
+
+--Exercise 3 break down
+--   []
+--1  [y:?]
+--2  [z:?,y:?]
+--3  [z:?,y:7]
+--4  [f:{},z:?,y:7]
+--9  
+--        [a:x+1, x:y*2, g:{}, f:{}, z:?, y:7]
+--        Call-by-Name:
+--             5 [a:x+1, x:y*2, g:{}, f:{}, z:?, y:16]
+--             6 [res:31, a:x+1, x:y*2, g:{}, f:{}, z:?, y:16]
+--        Call-by-Need:
+--             5 [a:15, x:14, g:{}, f:{}, z:?, y:16]
+--             6 [res:31, a:15, x:14, g:{}, f:{}, z:?, y:16]
+--10 
+--        Call-by-Name:
+--               [a:x-y+3, x:y*2, g:{}, f:{}, z:?, y:32]
+--             5 [a:x-y+3, x:y*2, g:{}, f:{}< z:?, y:36]
+--             6 [res:71, a:x-y+2, x:y*2, g:{}, f:{}, z:?, y:36]
+--        Call-by-Need:
+--               [a:x-y+3, x:14, g:{}, f:{}, z:?, y:32]
+--             5 [a:-15, x:14, g:{}, f:{}, z:?, y:-14]
+--             6 [res:-29, a:-15, x:14, g:{}, f:{}, z:?, y:-14]
+--        7 [f:{}, z:?, y:7]
+--        8 [g:{}, f:{}, z:?, y:7]
+--13 
+--        [x:y*2, g:{}, f:{}, z:?, y:7]
+--        Call-by-Name:
+--             9 [x:y*2, g:{}, f:{}< z:?, y:32]
+--             10 [x:y*2, g:{}, f:{}< z:71, y:36]
+--             11 [res:72, x:y*2, g:{}, f:{}, z:71, y:36]
+--        Call-by-Need:
+--             9 [x:14, g:{}, f:{}, z:?, y:32]
+--             10 [x:14, g:{}, f:{}, z:-29, y:-14]
+--             11 [res:-28, x:14, g:{}, f:{}, z:-29, y:-14]
+--       12 [g:{}, f:{}, z:?, y:7] 
 
 
 
