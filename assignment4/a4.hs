@@ -136,7 +136,7 @@
 
 --a. Call-by-Name
 --y = 54
---z = 111
+--z = 112
 
 
 --Walk Through
