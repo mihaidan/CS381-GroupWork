@@ -19,8 +19,20 @@ enroll(mary,261).
 enroll(john,381).
 enroll(jim,399).
 
+/* Part a */
 
+schedule(S, L, T) :- enroll(S, Z), where(Z, L), when(Z, T).
 
+/* Part b */
+
+usage(L, T) :- where(Z, L), when(Z, T).
+
+/* Part c*/
+
+conflict(L, T) :- when(Z, T), where(Z, L), when(W, T), where(W, L), W \= Z. 
+
+/* Part d Work in progress*/
+meet(A, B) :- enroll(A, Z), enroll(B, Z), where(Z, L), 
 
 /* Exercise 2 */
 
