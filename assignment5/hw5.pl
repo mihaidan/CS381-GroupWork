@@ -1,3 +1,12 @@
+/* CS381 Assignment 5 */
+
+/* Mihai Dan */
+/* Braden Ackles */
+/* Pranav Ramesh */
+/* Sophia Liu */
+/* Juan Ramirez */
+
+
 /* Exercise 1 */
 
 when(275,10).
