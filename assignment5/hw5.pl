@@ -42,8 +42,8 @@ conflict(L, T) :- when(Z, T), where(Z, L), when(W, T), where(W, L), W \= Z.
 /* Part d */
 meet(A, B) :- schedule(A, L, T), schedule(B, L, T), A\=B, schedule(A, L, T1), schedule(B, L, T2), T1\==T2+1, A\=B.
 
-/* Exercise 2 */
-/* Part a */
+/* Exercise 2
+Part a */
 
 rdup(L, M) :- rdup2(L, M).
 rdup2([],[]).
@@ -59,7 +59,6 @@ flat([H|T], L, F) :-
 flat(H, F, [H|F]) :- \+ is_list(H).
 
 /* Part c */
-/* Needs to be verified... */
 project([], _, [], _).
 project(_, [], [], _).
 project([I|J], [X|Y], [X|M], P) :- I =:= P, project(J, Y, M, P+1).
